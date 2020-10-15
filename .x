@@ -8,6 +8,6 @@ case "$1" in
 		vi -p node_server.py
 	;;
 	"")
-		build
+		execute
 	;;
 esac
