@@ -18,7 +18,8 @@ Install the dependencies,
 
 ```sh
 $ cd python_blockchain_app
-$ pip install -r requirements.txt
+$ python3 -m venv .env
+$ python3 -m pip install -r requirements.txt
 ```
 
 Start a blockchain node server,
