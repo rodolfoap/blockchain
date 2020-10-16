@@ -78,7 +78,7 @@ class Blockchain:
 
 	def add_new_transaction(self, transaction):
 		self.unconfirmed_transactions.append(transaction)
-		print('Unconfirmed transactions:', self.unconfirmed_transactions)
+		print('Unconfirmed transactions:', self.unconfirmed_transactions, file=sys.stderr)
 
 	@classmethod
 	def is_valid_proof(cls, block, block_hash):
