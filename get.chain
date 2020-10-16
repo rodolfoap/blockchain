@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+
+curl -sX GET http://127.0.0.1:8000/chain -H 'Content-Type: application/json'|jq .

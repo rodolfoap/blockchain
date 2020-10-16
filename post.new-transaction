@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+
+curl -sX POST http://127.0.0.1:8000/new_transaction -H 'Content-Type: application/json' -d '{"author": "James", "content": "My transaction-1"}'|jq .
