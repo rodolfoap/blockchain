@@ -111,10 +111,10 @@ class Blockchain:
 
 	def mine(self):
 		"""
-        This function serves as an interface to add the pending
-        transactions to the blockchain by adding them to the block
-        and figuring out Proof Of Work.
-        """
+	        This function serves as an interface to add the pending
+	        transactions to the blockchain by adding them to the block
+	        and figuring out Proof Of Work.
+		"""
 		if not self.unconfirmed_transactions:
 			return False
 
@@ -168,6 +168,7 @@ def get_chain():
 	    "length": len(chain_data),
 	    "chain": chain_data,
 	    "peers": list(peers)})
+
 # endpoint to request the node to mine the unconfirmed
 # transactions (if any). We'll be using it to initiate
 # a command to mine from our application itself.
@@ -184,6 +185,7 @@ def mine_unconfirmed_transactions():
 			# announce the recently mined block to the network
 			announce_new_block(blockchain.last_block)
 		return "Block #{} is mined.".format(blockchain.last_block.index)
+
 # endpoint to add new peers to the network.
 @app.route('/register_node', methods=['POST'])
 def register_new_peers():
