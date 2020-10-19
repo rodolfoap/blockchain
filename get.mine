@@ -1,4 +1,5 @@
 #!/bin/bash
 set -x
 
-curl -sX GET http://127.0.0.1:8000/mine -H 'Content-Type: application/json'|jq .
+curl -sX GET http://127.0.0.1:8000/mine -H 'Content-Type: application/json'
+echo
