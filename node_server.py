@@ -4,9 +4,11 @@ import time
 import sys
 from flask import Flask, request
 import requests
+import inspect
 
 class Block:
 	def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		self.index = index
 		self.transactions = transactions
 		self.timestamp = timestamp
@@ -14,6 +16,7 @@ class Block:
 		self.nonce = nonce
 
 	def compute_hash(self):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		block_string = json.dumps(self.__dict__, sort_keys=True)
 		return sha256(block_string.encode()).hexdigest()
 
@@ -21,19 +24,23 @@ class Blockchain:
 	difficulty = 2 # difficulty of PoW algorithm
 
 	def __init__(self):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		self.unconfirmed_transactions = []
 		self.chain = []
 
 	def create_genesis_block(self):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		genesis_block = Block(0, [], 0, "0")
 		genesis_block.hash = genesis_block.compute_hash()
 		self.chain.append(genesis_block)
 
 	@property
 	def last_block(self):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		return self.chain[-1]
 
 	def add_block(self, block, proof):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		previous_hash = self.last_block.hash
 		if previous_hash != block.previous_hash: return False
 		if not Blockchain.is_valid_proof(block, proof): return False
@@ -43,6 +50,7 @@ class Blockchain:
 
 	@staticmethod
 	def proof_of_work(block):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		block.nonce = 0
 		computed_hash = block.compute_hash()
 		while not computed_hash.startswith('0' * Blockchain.difficulty):
@@ -51,16 +59,19 @@ class Blockchain:
 		return computed_hash
 
 	def add_new_transaction(self, transaction):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		self.unconfirmed_transactions.append(transaction)
 		print('Unconfirmed transactions:', self.unconfirmed_transactions, file=sys.stderr)
 
 	@classmethod
 	def is_valid_proof(cls, block, block_hash):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		# Check if block_hash is valid hash of block and satisfies the difficulty criteria.
 		return (block_hash.startswith('0' * Blockchain.difficulty) and block_hash == block.compute_hash())
 
 	@classmethod
 	def check_chain_validity(cls, chain):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		result = True
 		previous_hash = "0"
 
@@ -80,6 +91,7 @@ class Blockchain:
 		return result
 
 	def mine(self):
+		fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 		if not self.unconfirmed_transactions: return False
 		last_block = self.last_block
 		new_block = Block(index=last_block.index + 1, transactions=self.  unconfirmed_transactions, timestamp=time.time(), previous_hash=last_block.hash)
@@ -90,6 +102,7 @@ class Blockchain:
 
 app = Flask(__name__)
 
+fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 # the node's copy of blockchain
 blockchain = Blockchain()
 blockchain.create_genesis_block()
@@ -100,6 +113,7 @@ peers = set()
 # Used by to add new data (posts) to the blockchain
 @app.route('/new_transaction', methods=['POST'])
 def new_transaction():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	tx_data = request.get_json()
 	print('request:', request, file=sys.stderr)
 	print('tx_data:', tx_data, file=sys.stderr)
@@ -113,6 +127,7 @@ def new_transaction():
 # Returns the node's copy of the chain.
 @app.route('/chain', methods=['GET'])
 def get_chain():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	chain_data = []
 	for block in blockchain.chain: chain_data.append(block.__dict__)
 	return json.dumps({
@@ -123,6 +138,7 @@ def get_chain():
 # Requests the node to mine the unconfirmed transactions (if any).
 @app.route('/mine', methods=['GET'])
 def mine_unconfirmed_transactions():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	result = blockchain.mine()
 	if not result: return "No transactions to mine"
 	else:
@@ -137,6 +153,7 @@ def mine_unconfirmed_transactions():
 # endpoint to add new peers to the network.
 @app.route('/register_node', methods=['POST'])
 def register_new_peers():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno)
 	node_address = request.get_json()["node_address"]
 	if not node_address: return "Invalid data", 400
 	peers.add(node_address)
@@ -145,6 +162,7 @@ def register_new_peers():
 
 @app.route('/register_with', methods=['POST'])
 def register_with_existing_node():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	node_address = request.get_json()["node_address"]
 	if not node_address: return "Invalid data", 400
 	data = {"node_address": request.host_url}
@@ -164,6 +182,7 @@ def register_with_existing_node():
 	else: 	return response.content, response.status_code
 
 def create_chain_from_dump(chain_dump):
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	generated_blockchain = Blockchain()
 	generated_blockchain.create_genesis_block()
 	for idx, block_data in enumerate(chain_dump):
@@ -177,6 +196,7 @@ def create_chain_from_dump(chain_dump):
 # Verifies and adds a block mined by someone else to the node's chain.
 @app.route('/add_block', methods=['POST'])
 def verify_and_add_block():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	block_data = request.get_json()
 	block = Block(block_data["index"], block_data["transactions"], block_data["timestamp"], block_data["previous_hash"], block_data["nonce"])
 	proof = block_data['hash']
@@ -187,9 +207,11 @@ def verify_and_add_block():
 # Query unconfirmed transactions
 @app.route('/pending_tx')
 def get_pending_tx():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	return json.dumps(blockchain.unconfirmed_transactions)
 
 def consensus():
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	global blockchain
 	longest_chain = None
 	current_len = len(blockchain.chain)
@@ -206,6 +228,7 @@ def consensus():
 	return False
 
 def announce_new_block(block):
+	fi=inspect.getframeinfo((inspect.stack()[0])[0]); print(">>> ", fi.filename, '; ', fi.function, '(); line:', fi.lineno, file=sys.stderr)
 	for peer in peers:
 		url = "{}add_block".format(peer)
 		headers = {'Content-Type': "application/json"}

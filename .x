@@ -21,9 +21,9 @@ execute(){
 		echo Done.
 	}
 	multitail 	-cT ANSI flask-8000.log \
-			-cT ANSI flask-8001.log \
-			-cT ANSI flask-8002.log \
 			-cT ANSI app-5000.log
+#			-cT ANSI flask-8001.log \
+#			-cT ANSI flask-8002.log \
 }
 
 
